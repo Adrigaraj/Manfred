@@ -6,8 +6,12 @@ import java.rmi.server.UnicastRemoteObject;
 class CerrojoImpl extends UnicastRemoteObject implements Cerrojo {
 
 	private static final long serialVersionUID = 1L;
-
+	
+	private boolean abierto;
+	
+	
 	CerrojoImpl() throws RemoteException {
+		this.abierto = true;
 	}
 
 	@Override
@@ -16,6 +20,6 @@ class CerrojoImpl extends UnicastRemoteObject implements Cerrojo {
 
 	@Override
 	public synchronized boolean liberar() throws RemoteException {
-		return true;
+		return abierto ? !(abierto = false) : false;
 	}
 }

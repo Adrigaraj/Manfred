@@ -2,8 +2,10 @@ package dsm;
 import java.io.*;
 
 public class ObjetoCompartido implements Serializable {
-
-    private CabeceraObjetoCompartido cab;
+	
+	private static final long serialVersionUID = 1L;
+	
+	private CabeceraObjetoCompartido cab;
     private Object [] objeto;
 
     public ObjetoCompartido(String n, Object [] o) {
