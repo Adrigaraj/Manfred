@@ -5,7 +5,8 @@ import java.util.*;
 
 
 public class AlmacenImpl extends UnicastRemoteObject implements Almacen {
-
+	
+	
 
     public AlmacenImpl() throws RemoteException {
     }

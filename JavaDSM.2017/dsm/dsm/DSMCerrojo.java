@@ -5,7 +5,10 @@ import java.rmi.server.*;
 import java.util.*;
 
 public class DSMCerrojo {
-
+	
+	CerrojoImpl cerrojo;
+	
+	
     public DSMCerrojo (String nom) throws RemoteException {
     }
 
