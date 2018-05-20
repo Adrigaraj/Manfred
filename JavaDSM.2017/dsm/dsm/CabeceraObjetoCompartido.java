@@ -2,9 +2,11 @@ package dsm;
 import java.io.*;
 
 public class CabeceraObjetoCompartido implements Serializable  {
-
+	
+	private static final long serialVersionUID = 1L;
+	
 	private String nombre;
-	private int version=0;
+	private int version = 0;
 
 	protected CabeceraObjetoCompartido(String n) {
 		nombre=n;
