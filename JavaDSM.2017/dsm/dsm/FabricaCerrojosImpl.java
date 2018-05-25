@@ -15,7 +15,7 @@ public class FabricaCerrojosImpl extends UnicastRemoteObject implements FabricaC
 	
     public synchronized	Cerrojo iniciar(String s) throws RemoteException {
     	if(!cerrojos.containsKey(s)) {
-    		cerrojos.put(s, new CerrojoImpl());
+    		cerrojos.put(s, new CerrojoImpl(s));
     	}
     	return cerrojos.get(s);
     }

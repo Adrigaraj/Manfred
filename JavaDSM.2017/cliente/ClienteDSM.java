@@ -41,7 +41,7 @@ public class ClienteDSM {
         Integer [] v2 = new Integer[1];
         v2[0] = new Integer(0);
 
-        List [] v3 = new List[1];;
+        List [] v3 = new List[1];
         v3[0] = new LinkedList<Contador>();
 
 
