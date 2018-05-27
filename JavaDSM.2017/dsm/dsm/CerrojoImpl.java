@@ -2,61 +2,66 @@ package dsm;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 class CerrojoImpl extends UnicastRemoteObject implements Cerrojo {
 
 	private static final long serialVersionUID = 1L;
 
 	String nombre;
-	ReentrantLock cerrojo;
 	boolean exc;
 	int numLectores;
 	int numEscritores;
-	Condition cond;
+	boolean adquirido;
 
 	CerrojoImpl(String nombre) throws RemoteException {
 		this.nombre = nombre;
-		this.cerrojo = new ReentrantLock();
 		this.numEscritores = 0;
 		this.numLectores = 0;
-		cond = this.cerrojo.newCondition();
+		this.adquirido = false;
 	}
 
 	@Override
 	public synchronized void adquirir(boolean exc) throws RemoteException {
-		if (exc) {
-			while ((numLectores > 0 || numEscritores > 0)) {
-				try {
-					cond.await();
-				} catch (InterruptedException e) {
-					System.out.println(e.getStackTrace() + e.getMessage());
+		synchronized (this.nombre) {
+			if (exc) {
+				while ((numLectores > 0 || numEscritores > 0)) {
+					try {
+						nombre.wait();
+					} catch (InterruptedException e) {
+						System.out.println(e.getStackTrace() + e.getMessage());
+					}
 				}
+				numEscritores++;
+			} else {
+				while (numEscritores > 0) {
+					try {
+						nombre.wait();
+					} catch (InterruptedException e) {
+						System.out.println(e.getStackTrace() + e.getMessage());
+					}
+				}
+				adquirido = true;
+				numLectores++;
 			}
-			numEscritores++;
-			cerrojo.lock();
-		} else {
-			while (numEscritores > 0)
-				try {
-					cond.await();
-				} catch (InterruptedException e) {
-					System.out.println(e.getStackTrace() + e.getMessage());
-				}
-			numLectores++;
 		}
 	}
 
 	@Override
 	public synchronized boolean liberar() throws RemoteException {
-		if (exc) {
-			if (!cerrojo.isLocked())
+		synchronized (this.nombre) {
+			if (exc) {
+				if (numEscritores > 0) { // Está adquirido por un escritor
+					numEscritores--;
+					nombre.notify();
+					return true;
+				} else
+					return false;
+			} else if (numLectores > 0) { // Está adquirido por un lector
+				numLectores--;
+				nombre.notify();
+				return true;
+			} else
 				return false;
-			else
-				numEscritores--;
-		} else
-			numLectores--;
-		cond.signal();
-		return true;
+		}
 	}
 }
